@@ -4,6 +4,10 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) and uses Angular 11.
 
+## Demo
+
+You can find a demo of the application on YouTube here: [One Prescription GR Demo](https://youtu.be/6Wp8H9NV6Ls).
+
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change
