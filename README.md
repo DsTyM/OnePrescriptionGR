@@ -49,12 +49,6 @@ http://localhost:4200
 
 The project needs [CORS Anywhere](https://github.com/Rob--W/cors-anywhere/) to communicate with e-prescriptions API.
 
-To start CORS Anywhere, run:
-
-```shell
-node node_modules/cors-anywhere/server.js
-```
-
 [How to use CORS Anywhere?](https://stackoverflow.com/a/41137337/6151784)
 
 ## Example Values
