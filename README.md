@@ -29,8 +29,8 @@ Then you should open this file: `src/environments/properties.ts`:
 apiKey: 'REPLACE_WITH_YOUR_KEY_HERE'
 ```
 
-and change `REPLACE_WITH_YOUR_KEY_HERE` with our API Key that [Idika](http://www.idika.gr/) has provided to us. If we
-don't have one, we should request one from Idika.
+and change `REPLACE_WITH_YOUR_KEY_HERE` with your API Key that [Idika](http://www.idika.gr/) has provided to you If we
+don't have one, you should request one from Idika.
 
 To start the application, you need to run:
 
