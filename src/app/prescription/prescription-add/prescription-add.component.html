@@ -1,0 +1,358 @@
+<div class="row">
+  <div class="col-12">
+    <app-header></app-header>
+  </div>
+  <div class="col-12">
+    <div class="col-10">
+      <br>
+      <br>
+      <h3 style="color: #107dd0;">Δημιουργία Συνταγής</h3>
+      <hr>
+      <form #f="ngForm">
+        <div style="color: #107dd0;">Πληροφορίες Επίσκεψης:</div>
+        <div style="font-size: 18px;">
+          - <span style="color: #107dd0;">ID Επίσκεψης: </span> {{prescription.visit.id}} <br>
+          - <span style="color: #107dd0;">Ημερομηνία Έναρξης Συνταγής: </span> {{visit.startDate}} <br>
+          - <span style="color: #107dd0;">Λόγος Επίσκεψης: </span> {{visit.reason}} <br>
+          - <span style="color: #107dd0;">Σχόλια Επίσκεψης: </span> <br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{visit.comments}} <br>
+        </div>
+        <br>
+        <div>
+          <div style="color: #107dd0;">Πληροφορίες Ασθενή:</div>
+          <ng-container *ngIf="prescription.patient.amka != null">
+            <div style="font-size: 18px;">
+              - <span style="color: #107dd0;">ΑΜΚΑ: </span> {{prescription.patient.amka}} <br>
+              - <span style="color: #107dd0;">Όνομα: </span> {{prescription.patient.firstName}} <br>
+              - <span style="color: #107dd0;">Επώνυμο: </span> {{prescription.patient.lastName}} <br>
+              - <span style="color: #107dd0;">Ημερομηνία Γέννησης: </span> {{prescription.patient.birthDate | date}}
+              <br>
+              - <span style="color: #107dd0;">Πόλη: </span> {{prescription.patient.city}}
+              , {{prescription.patient.county}}
+              <br>
+              - <span style="color: #107dd0;">Διεύθυνση: </span> {{prescription.patient.address}} <br>
+            </div>
+          </ng-container>
+        </div>
+        <br>
+
+        <div class="form-group">
+          <label for="prescription-comments" style="color: #107dd0;">Σχόλια Συνταγής: </label>
+          <textarea [(ngModel)]="prescriptionData.comments" name="name" id="prescription-comments"
+                    class="form-control" type="text" rows="3" placeholder="Σχόλια Συνταγής"></textarea>
+        </div>
+
+        <br>
+        <br>
+        <br>
+        <div class="form-group">
+          <label for="medicine-name" style="color: #107dd0;">Αναζητήστε Φάρμακα Βάσει του Ονόματος Φαρμάκου: </label>
+          <input [(ngModel)]="prescriptionData.medicineName" name="medicine-name" id="medicine-name"
+                 class="form-control" type="text" placeholder="Όνομα Φαρμάκου" required #r1="ngModel"/>
+          <div style="color: red; font-size: 13px;" *ngIf="!r1.valid && r1.touched">Παρακαλώ συμπληρώστε αυτό το
+            πεδίο!
+          </div>
+        </div>
+
+        <button (click)="searchMedicines()" type="button" class="btn btn-secondary">
+          Αναζήτηση Φαρμάκου
+        </button>
+        <br>
+        <br>
+
+        <ng-container *ngIf="medicines !== null && medicines !== undefined && medicines.item[0].barcode != null">
+          <div ngbDropdown class="d-inline-block">
+            <label for="dropdownBasic1" style="color: #107dd0;">Επιλέξτε Φάρμακο: </label>
+            <br>
+            <button class="btn btn-outline-primary" id="dropdownBasic1" ngbDropdownToggle>
+              <ng-container *ngIf="selectedMedicineName == null">
+                Επιλοή Φαρμάκου
+              </ng-container>
+              <ng-container *ngIf="selectedMedicineName != null">
+                {{selectedMedicineName}}
+              </ng-container>
+            </button>
+            <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+              <ng-container *ngFor="let medicine of medicines.item">
+                <button (click)="selectMedicine(medicine.barcode)" ngbDropdownItem class="btn btn-primary m-1">
+                  {{medicine.commercialName + ' ' + medicine.formCode + ' ' + medicine.content + ' ' +
+                medicine.packageForm}}
+                </button>
+              </ng-container>
+            </div>
+          </div>
+        </ng-container>
+        <br>
+        <br>
+
+        <ng-container *ngIf="selectedMedicine != null">
+          <div ngbDropdown class="d-inline-block">
+            <label for="dropdownBasic7" style="color: #107dd0;">Επιλογή Ημερήσιας Δόσης Φαρμάκου: </label>
+            <br>
+            <button class="btn btn-outline-primary" id="dropdownBasic7" ngbDropdownToggle>
+              <ng-container *ngIf="selectedMedicineDailyDose == null">
+                Επιλογή Ημερήσιας Δόσης Φαρμάκου
+              </ng-container>
+              <ng-container *ngIf="selectedMedicineDailyDose != null">
+                {{selectedMedicineDailyDose}}
+              </ng-container>
+            </button>
+            <div ngbDropdownMenu aria-labelledby="dropdownBasic7">
+              <ng-container *ngFor="let dose of selectedMedicineDailyDoseArray">
+                <button (click)="selectMedicineDailyDose(dose)" ngbDropdownItem class="btn btn-primary m-1">
+                  {{dose}}
+                </button>
+              </ng-container>
+            </div>
+          </div>
+          <br>
+          <br>
+          <br>
+        </ng-container>
+
+        <div class="form-group">
+          <label for="icd10-title" style="color: #107dd0;">Αναζητήστε ICD-10 Βάσει του Τίτλου ICD-10: </label>
+          <input [(ngModel)]="prescriptionData.icd10title" name="icd10-title" id="icd10-title" class="form-control"
+                 type="text" placeholder="ICD-10 Τίτλος" required #r2="ngModel"/>
+          <div style="color: red; font-size: 13px;" *ngIf="!r2.valid && r2.touched">Παρακαλώ συμπληρώστε αυτό το
+            πεδίο!
+          </div>
+        </div>
+
+        <ng-container *ngIf="prescriptionData.icd10title !== null && prescriptionData.icd10title.trim() !== ''">
+          <div class="form-group">
+            <label for="icd10-description" style="color: #107dd0;">Αναζητήστε ICD-10 Βάσει της Περιγραφής
+              ICD-10: </label>
+            <input [(ngModel)]="prescriptionData.icd10description" name="icd10-description" id="icd10-description"
+                   class="form-control" type="text" placeholder="ICD-10 Περιγραφή"/>
+          </div>
+        </ng-container>
+
+        <button (click)="searchICD10s()" type="button" class="btn btn-secondary">
+          Αναζήτηση ICD-10
+        </button>
+        <br>
+        <br>
+
+        <ng-container *ngIf="icd10s !== null && icd10s !== undefined && icd10s.item[0].code != null">
+          <div ngbDropdown class="d-inline-block">
+            <label for="dropdownBasic2" style="color: #107dd0;">Επιλέξτε ICD-10: </label>
+            <br>
+            <button class="btn btn-outline-primary" id="dropdownBasic2" ngbDropdownToggle>
+              <ng-container *ngIf="selectedIcd10Name == null">
+                Επιλέξτε ICD-10
+              </ng-container>
+              <ng-container *ngIf="selectedIcd10Name != null">
+                {{selectedIcd10Name}}
+              </ng-container>
+            </button>
+            <div ngbDropdownMenu aria-labelledby="dropdownBasic2">
+              <ng-container *ngFor="let icd10 of icd10s.item">
+                <button (click)="selectICD10(icd10.code)" ngbDropdownItem class="btn btn-primary m-1">
+                  {{icd10.title}}
+                </button>
+              </ng-container>
+            </div>
+          </div>
+          <br>
+          <br>
+        </ng-container>
+        <br>
+        <br>
+
+        <div class="form-group">
+          <label for="disease-name" style="color: #107dd0;">Αναζητήστε Ασθένεια: </label>
+          <input [(ngModel)]="prescriptionData.diseaseName" name="disease-name" id="disease-name" class="form-control"
+                 type="text" placeholder="Ασθένεια" required #r4="ngModel"/>
+          <div style="color: red; font-size: 13px;" *ngIf="!r4.valid && r4.touched">Παρακαλώ συμπληρώστε αυτό το
+            πεδίο!
+          </div>
+        </div>
+
+        <button (click)="searchDiseases()" type="button" class="btn btn-secondary">
+          Αναζήτηση Ασθένειας
+        </button>
+        <br>
+        <br>
+
+        <ng-container *ngIf="searchedDiseases !== null && searchedDiseases !== undefined
+        && searchedDiseases[0].id != null">
+          <div ngbDropdown class="d-inline-block">
+            <label for="dropdownBasic6" style="color: #107dd0;">Επιλέξτε Ασθένεια: </label>
+            <br>
+            <button class="btn btn-outline-primary" id="dropdownBasic6" ngbDropdownToggle>
+              <ng-container *ngIf="selectedDisease == null">
+                Επιλέξτε Ασθένεια
+              </ng-container>
+              <ng-container *ngIf="selectedDisease != null">
+                {{selectedDisease.name}}
+              </ng-container>
+            </button>
+            <div ngbDropdownMenu aria-labelledby="dropdownBasic6">
+              <ng-container *ngFor="let disease of searchedDiseases">
+                <button (click)="selectDisease(disease.id)" ngbDropdownItem class="btn btn-primary m-1">
+                  {{disease.name}}
+                </button>
+              </ng-container>
+            </div>
+          </div>
+          <br>
+        </ng-container>
+        <br>
+        <br>
+        <br>
+
+        <div ngbDropdown class="d-inline-block">
+          <label for="dropdownBasic3" style="color: #107dd0;">Επιλογή Ποσοστού συμμετοχής ασφαλισμένου (%): </label>
+          <br>
+          <button class="btn btn-outline-primary" id="dropdownBasic3" ngbDropdownToggle>
+            <ng-container *ngIf="selectedParticipationPercentage == null">
+              Επιλέξτε Ποσοστό (%)
+            </ng-container>
+            <ng-container *ngIf="selectedParticipationPercentage != null">
+              {{selectedParticipationPercentage}}
+            </ng-container>
+          </button>
+          <div ngbDropdownMenu aria-labelledby="dropdownBasic3">
+            <ng-container *ngFor="let per1 of participationPercentages">
+              <button (click)="selectParticipationPercentage(per1)" ngbDropdownItem class="btn btn-primary m-1">
+                {{per1}}
+              </button>
+            </ng-container>
+          </div>
+        </div>
+        <br>
+        <br>
+
+        <div ngbDropdown class="d-inline-block">
+          <label for="dropdownBasic4" style="color: #107dd0;">Επιλογή Έπαναληψιμότητας Συνταγής: </label>
+          <br>
+          <button class="btn btn-outline-primary" id="dropdownBasic4" ngbDropdownToggle>
+            <ng-container *ngIf="selectedRepeatability == null">
+              Select Repeatability
+            </ng-container>
+            <ng-container *ngIf="selectedRepeatability != null">
+              {{selectedRepeatability.description}}
+            </ng-container>
+          </button>
+          <div ngbDropdownMenu aria-labelledby="dropdownBasic4">
+            <ng-container *ngFor="let rep1 of repeatibilities">
+              <button (click)="selectRepeatability(rep1)" ngbDropdownItem class="btn btn-primary m-1">
+                {{rep1.description}}
+              </button>
+            </ng-container>
+          </div>
+        </div>
+        <br>
+        <br>
+
+        <br>
+        <div style="color: #107dd0; margin-bottom: 8px;">Είναι Χρόνια Ασθένεια;</div>
+        <form [formGroup]="checkboxGroupForm">
+          <div class="btn-group btn-group-toggle">
+            <label class="btn-primary" ngbButtonLabel>
+              <ng-container *ngIf="checkboxGroupForm.value.isChronicIllness === null
+               || checkboxGroupForm.value.isChronicIllness === false">
+                <input type="checkbox" formControlName="isChronicIllness" ngbButton> Όχι
+              </ng-container>
+              <ng-container *ngIf="checkboxGroupForm.value.isChronicIllness === true">
+                <input type="checkbox" formControlName="isChronicIllness" ngbButton> Ναι
+              </ng-container>
+            </label>
+          </div>
+        </form>
+        <br>
+
+        <br>
+        <div style="color: #107dd0; margin-bottom: 8px;">Είναι Μηνιαία Συνταγή;</div>
+        <form [formGroup]="checkboxGroupForm">
+          <div class="btn-group btn-group-toggle">
+            <label class="btn-primary" ngbButtonLabel>
+              <ng-container *ngIf="checkboxGroupForm.value.isMonthlyPrescription === null
+               || checkboxGroupForm.value.isMonthlyPrescription === false">
+                <input type="checkbox" formControlName="isMonthlyPrescription" ngbButton> Όχι
+              </ng-container>
+              <ng-container *ngIf="checkboxGroupForm.value.isMonthlyPrescription === true">
+                <input type="checkbox" formControlName="isMonthlyPrescription" ngbButton> Ναι
+              </ng-container>
+            </label>
+          </div>
+        </form>
+        <br>
+
+        <br>
+        <div style="color: #107dd0; margin-bottom: 8px;">Είναι Δίμηνη Συνταγή;</div>
+        <form [formGroup]="checkboxGroupForm">
+          <div class="btn-group btn-group-toggle">
+            <label class="btn-primary" ngbButtonLabel>
+              <ng-container *ngIf="checkboxGroupForm.value.isTwoMonthsPrescription === null
+               || checkboxGroupForm.value.isTwoMonthsPrescription === false">
+                <input type="checkbox" formControlName="isTwoMonthsPrescription" ngbButton> Όχι
+              </ng-container>
+              <ng-container *ngIf="checkboxGroupForm.value.isTwoMonthsPrescription === true">
+                <input type="checkbox" formControlName="isTwoMonthsPrescription" ngbButton> Ναι
+              </ng-container>
+            </label>
+          </div>
+        </form>
+        <br>
+
+        <br>
+        <div style="color: #107dd0; margin-bottom: 8px;">
+          Είναι Συνταγογράφηση με Βάση Εμπορική Ονομασία Φαρμάκου;
+        </div>
+        <form [formGroup]="checkboxGroupForm">
+          <div class="btn-group btn-group-toggle">
+            <label class="btn-primary" ngbButtonLabel>
+              <ng-container *ngIf="checkboxGroupForm.value.isPrescribedByBrandNameMedicine === null
+               || checkboxGroupForm.value.isPrescribedByBrandNameMedicine === false">
+                <input type="checkbox" formControlName="isPrescribedByBrandNameMedicine" ngbButton> Όχι
+              </ng-container>
+              <ng-container *ngIf="checkboxGroupForm.value.isPrescribedByBrandNameMedicine === true">
+                <input type="checkbox" formControlName="isPrescribedByBrandNameMedicine" ngbButton> Ναι
+              </ng-container>
+            </label>
+          </div>
+        </form>
+        <br>
+
+        <ng-container *ngIf="checkboxGroupForm.value.isPrescribedByBrandNameMedicine !== null
+               && checkboxGroupForm.value.isPrescribedByBrandNameMedicine === true">
+          <div ngbDropdown class="d-inline-block">
+            <label for="dropdownBasic5" style="color: #107dd0;">
+              Επιλογή Λόγου Συνταγογράφησης με Βάση την Εμπορική Ονομασία του Φαρμάκου:
+            </label>
+            <br>
+            <button class="btn btn-outline-primary" id="dropdownBasic5" ngbDropdownToggle>
+              <ng-container *ngIf="selectedReasonForBrandNamedMedicines == null">
+                Επιλέξτε Λόγο
+              </ng-container>
+              <ng-container *ngIf="selectedReasonForBrandNamedMedicines != null">
+                {{selectedReasonForBrandNamedMedicines.name}}
+              </ng-container>
+            </button>
+            <div ngbDropdownMenu aria-labelledby="dropdownBasic5">
+              <ng-container *ngFor="let reason of reasonsForBrandNamedMedicines">
+                <button (click)="selectReasonForBrandNamedMedicines(reason)"
+                        ngbDropdownItem class="btn btn-primary m-1">
+                  {{reason.name}}
+                </button>
+              </ng-container>
+            </div>
+          </div>
+          <br>
+          <br>
+        </ng-container>
+
+        <br>
+        <br>
+        <button (click)="createPrescription()" type="button" class="btn btn-primary"
+                [disabled]="!f.valid">
+          Δημιουργήστε την<br>Συνταγή
+        </button>
+      </form>
+      <br>
+      <br>
+    </div>
+  </div>
+</div>

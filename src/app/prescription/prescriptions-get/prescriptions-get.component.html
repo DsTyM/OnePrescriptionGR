@@ -1,0 +1,63 @@
+<div class="row">
+  <div class="col-12">
+    <app-header></app-header>
+  </div>
+  <div class="col-12">
+    <br>
+    <br>
+    <h2 style="color: #107dd0; display:inline;">Λίστα Συνταγών</h2>
+    <br>
+    <br>
+    <table class="table" style="color: #107dd0">
+      <thead>
+      <tr style="color: #eb201e">
+        <th scope="col">ΑΜΚΑ Ασθενή</th>
+        <th scope="col">Ονοματεπώνυμο</th>
+        <th scope="col">Ημερομηνία</th>
+        <th scope="col">Κατάσταση</th>
+        <th scope="col">Δράση</th>
+      </tr>
+      </thead>
+      <tbody>
+      <ng-container *ngIf="!isFetching && prescriptions.item.length >= 0">
+        <ng-container *ngFor="let prescription of prescriptions.item">
+          <tr>
+            <td>{{prescription.patientInfo.amka}}</td>
+            <td>{{prescription.patientInfo.firstName + ' ' + prescription.patientInfo.lastName}}</td>
+            <td>{{prescription.issueDate}}</td>
+            <td>{{prescription.status.status}}</td>
+            <td>
+              <button (click)="viewPrescriptionDetails(prescription.barcode)" class="btn btn-success" style="
+              margin-right: 24px; margin-top: 5px; margin-bottom: 5px;">
+                Δείτε<br>Περισσότερα
+              </button>
+              <br>
+              <ng-container
+                *ngIf="prescription.status.status != 'ΑΚΥΡΩΜΕΝΗ' && prescription.status.status != 'ΟΛΟΚΛΗΡΩΜΕΝΗ'">
+                <button (click)="editPrescription(prescription.barcode)" class="btn btn-info" style="
+                    margin-right: 24px; margin-top: 5px; margin-bottom: 5px;">
+                  Επεξεργασία
+                </button>
+                <br>
+              </ng-container>
+              <ng-container
+                *ngIf="prescription.status.status != 'ΑΚΥΡΩΜΕΝΗ' && prescription.status.status != 'ΟΛΟΚΛΗΡΩΜΕΝΗ'">
+                <button (click)="openConfirmDeleteModal(prescription.barcode)" class="btn btn-danger" style="
+                    margin-right: 24px; margin-top: 5px; margin-bottom: 5px;">
+                  Ακύρωση
+                </button>
+                <br>
+              </ng-container>
+            </td>
+          </tr>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="isFetching">
+        <div>
+          <app-spinner class="main-loader"></app-spinner>
+        </div>
+      </ng-container>
+      </tbody>
+    </table>
+  </div>
+</div>

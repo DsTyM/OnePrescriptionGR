@@ -1,0 +1,64 @@
+<div class="row">
+  <div class="col-12">
+    <app-header></app-header>
+  </div>
+  <div class="col-12">
+    <br>
+    <br>
+    <h2 style="color: #107dd0; display:inline;">Λίστα Επισκέψεων</h2>
+    <button (click)="createVisit()" type="button" class="btn btn-primary" style="float: right;">
+      Δημιουργία Επίσκεψης
+    </button>
+    <br>
+    <br>
+    <table class="table" style="color: #107dd0">
+      <thead>
+      <tr style="color: #eb201e">
+        <th scope="col">ΑΜΚΑ Ασθενή</th>
+        <th scope="col">Ονοματεπώνυμο</th>
+        <th scope="col">Ημερομηνία</th>
+        <th scope="col">Κατάσταση</th>
+        <th scope="col">Δράση</th>
+      </tr>
+      </thead>
+      <tbody>
+      <ng-container *ngIf="!isFetching && visits.item.length >= 0">
+        <ng-container *ngFor="let visit of visits.item">
+          <tr>
+            <td>{{visit.patientInfo.amka}}</td>
+            <td>{{visit.patientInfo.firstName + ' ' + visit.patientInfo.lastName}}</td>
+            <td>{{visit.startDate}}</td>
+            <td>{{visit.status.status}}</td>
+            <td>
+              <button (click)="viewVisitDetails(visit.id)" class="btn btn-success" style="
+              margin-right: 24px; margin-top: 5px; margin-bottom: 5px;">
+                Δείτε<br>Περισσότερα
+              </button>
+              <br>
+              <ng-container *ngIf="visit.status.status != 'Ακυρωμένη' && visit.status.status != 'Ολοκληρωμένη'">
+                <button (click)="editVisit(visit.id)" class="btn btn-info" style="
+                    margin-right: 24px; margin-top: 5px; margin-bottom: 5px;">
+                  Επεξεργασία
+                </button>
+                <br>
+              </ng-container>
+              <ng-container *ngIf="visit.status.status != 'Ακυρωμένη' && visit.status.status != 'Ολοκληρωμένη'">
+                <button (click)="openConfirmDeleteModal(visit.id)" class="btn btn-danger" style="
+                    margin-right: 24px; margin-top: 5px; margin-bottom: 5px;">
+                  Ακύρωση
+                </button>
+                <br>
+              </ng-container>
+            </td>
+          </tr>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="isFetching">
+        <div>
+          <app-spinner class="main-loader"></app-spinner>
+        </div>
+      </ng-container>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,154 @@
+<div class="row">
+  <div class="col-12">
+    <app-header></app-header>
+  </div>
+  <div class="col-10">
+    <br>
+    <br>
+    <h2 style="color: #107dd0;">
+      Συνταγή: {{prescription.id}}
+      <ng-container *ngIf="!isFetching && prescription.status != 'cancelled'">
+        <button (click)="openConfirmDeleteModal(prescription.id)" class="btn btn-danger" style="
+        float: right; margin-right: 20px;">
+          Ακύρωση
+        </button>
+      </ng-container>
+      <ng-container *ngIf="!isFetching && prescription.status != 'cancelled'">
+        <button (click)="editPrescription(prescription.id)" class="btn btn-info" style="float: right;
+            margin-right: 20px;">
+          Επεξεργασία
+        </button>
+      </ng-container>
+      <ng-container *ngIf="!isFetching && prescription.status != 'cancelled'">
+        <button (click)="downloadPrescriptionAsPDF(prescription.id)" class="btn btn-success" style="
+        float: right; margin-right: 20px;">
+          Λήψη
+        </button>
+      </ng-container>
+    </h2>
+    <hr>
+    <div class="table" style="color: #107dd0;">
+      <ng-container *ngIf="!isFetching">
+        <ul style="font-size: 24px;">
+          <li>
+            <span style="color: red;">Barcode Συνταγής: </span>
+            {{prescription.id}}
+          </li>
+          <li>
+            <span style="color: red;">Τίτλος Συνταγής: </span>
+            {{prescription.title}}
+          </li>
+          <li>
+            <span style="color: red;">Ημερομηνία Έναρξης Συνταγής: </span>
+            {{prescription.startDate}}
+          </li>
+          <li>
+            <span style="color: red;">Κατάσταση Συνταγής: </span>
+            {{prescription.status}}
+          </li>
+          <li>
+            <span style="color: red;">Σχόλια Ιατρού: </span> <br>
+            {{prescription.comments}}
+          </li>
+          <li>
+            <div style="color: red;">Πληροφορίες Διάγνωσης ICD-10:</div>
+            <ng-container *ngIf="prescription.patient.amka != null">
+              <div style="font-size: 18px;">
+                - <span style="color: red;">Κωδικός ICD-10: </span> {{prescription.icd10.code}} <br>
+                - <span style="color: red;">Τίτλος Διάγνωσης ICD-10: </span> {{prescription.icd10.diagnosis}} <br>
+              </div>
+            </ng-container>
+          </li>
+          <li>
+            <div style="color: red;">Πληροφορίες Ασθένειας:</div>
+            <ng-container *ngIf="prescription.patient.amka != null">
+              <div style="font-size: 18px;">
+                - <span style="color: red;">ID Ασθένειας: </span> {{prescription.disease.id}} <br>
+                - <span style="color: red;">Τίτλος Ασθένειας: </span> {{prescription.disease.name}} <br>
+              </div>
+            </ng-container>
+          </li>
+          <li>
+            <div style="color: red;">Πληροφορίες Ασθενή:</div>
+            <ng-container *ngIf="prescription.patient.amka != null">
+              <div style="font-size: 18px;">
+                - <span style="color: red;">ΑΜΚΑ: </span> {{prescription.patient.amka}} <br>
+                - <span style="color: red;">Όνομα: </span> {{prescription.patient.firstName}} <br>
+                - <span style="color: red;">Επώνυμο: </span> {{prescription.patient.lastName}} <br>
+                - <span style="color: red;">Ημερομηνία Γέννησης: </span> {{prescription.patient.birthDate | date}} <br>
+                - <span style="color: red;">Πόλη: </span> {{prescription.patient.city}}, {{prescription.patient.county}}
+                <br>
+                - <span style="color: red;">Διεύθυνση: </span> {{prescription.patient.address}} <br>
+              </div>
+            </ng-container>
+          </li>
+          <li>
+            <div style="color: red;">Στοιχεία Μονάδας Συνταγογράφησης:</div>
+            <ng-container *ngIf="prescription.unit.id != null">
+              <div style="font-size: 18px;">
+                - <span style="color: red;">ID: </span> {{prescription.unit.id}} <br>
+                - <span style="color: red;">Όνομα: </span> {{prescription.unit.healthCareUnit.unitType.name}} <br>
+                - <span style="color: red;">Περιγραφή: </span> {{prescription.unit.healthCareUnit.description}} <br>
+              </div>
+            </ng-container>
+          </li>
+          <li>
+            <div style="color: red;">Πληροφορίες Επίσκεψης:</div>
+            <div style="font-size: 18px;">
+              - <span style="color: red;">ID Επίσκεψης: </span> {{prescription.visit.id}} <br>
+              - <span style="color: red;">Ημερομηνία Έναρξης Συνταγής: </span> {{prescription.visit.startDate}} <br>
+              - <span style="color: red;">Λόγος: </span> {{prescription.visit.reason}} <br>
+              - <span style="color: red;">Σχόλια: </span> <br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{prescription.visit.comments}} <br>
+            </div>
+          </li>
+          <li>
+            <div style="color: red;">Πληροφορίες Φαρμάκου:</div>
+            <div style="font-size: 18px;">
+              - <span style="color: red;">Κωδικός ΕΟΦ: </span> {{prescription.medicine.code}} <br>
+              - <span style="color: red;">Barcode: </span> {{prescription.medicine.barcode}} <br>
+              - <span style="color: red;">Ονομασία: </span> {{prescription.medicine.name}} <br>
+              - <span style="color: red;">Ποσότητα: </span> {{prescription.medicine.quantity}} <br>
+              - <span style="color: red;">Μονάδα Μέτρησης: </span> {{prescription.medicine.doseUnit}} <br>
+              - <span style="color: red;">Δραστική Ουσία: </span> {{prescription.medicine.activeSubstanceDescription}}
+              <br>
+              - <span style="color: red;">Συνταγογραφημένη Ημερησία Ποσότητα Δόσης Φαρμάκου: </span>
+              {{prescription.medicine.dailyDose}}
+              <br>
+              - <span style="color: red;">Διάρκεια Θεραπείας σε Ημέρες: </span>
+              {{prescription.medicine.treatmentDuration}}
+              <br>
+            </div>
+          </li>
+          <li>
+            <div style="color: red;">Πληροφορίες Συνταγής:</div>
+            <div style="font-size: 18px;">
+              - <span style="color: red;">Ποσοστό Συμμετοχής Ασφαλισμένου (%): </span>
+              {{prescription.patientParticipationPercentage}} <br>
+              - <span style="color: red;">Έπαναληψιμότητα Συνταγής: </span>
+              {{prescription.info.repeatability.description}} <br>
+              - <span style="color: red;">Είναι Χρόνια Ασθένεια; </span>
+              {{prescription.isChronicIllness === '0' ? 'Όχι' : 'Ναι'}} <br>
+              - <span style="color: red;">Είναι Μηνιαία Συνταγή; </span>
+              {{prescription.isMonthlyPrescription === '0' ? 'Όχι' : 'Ναι'}} <br>
+              - <span style="color: red;">Είναι Δίμηνη Συνταγή; </span>
+              {{prescription.isTwoMonthsPrescription === '0' ? 'Όχι' : 'Ναι'}} <br>
+              - <span style="color: red;">Είναι Συνταγογράφηση με Βάση Εμπορική Ονομασία Φαρμάκου; </span>
+              {{prescription.isPrescribedByBrandNameMedicine === '0' ? 'Όχι' : 'Ναι'}} <br>
+              <ng-container *ngIf="prescription.isPrescribedByBrandNameMedicine === '1'">
+                - <span style="color: red;">Λόγος Συνταγογράφησης με Βάση την Εμπορική Ονομασία του Φαρμάκου: </span>
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                {{prescription.info.reasonForBrandNamedMedicines.name}} <br>
+              </ng-container>
+              <br>
+            </div>
+          </li>
+        </ul>
+      </ng-container>
+      <ng-container *ngIf="isFetching">
+        <app-spinner class="main-loader"></app-spinner>
+      </ng-container>
+    </div>
+  </div>
+</div>

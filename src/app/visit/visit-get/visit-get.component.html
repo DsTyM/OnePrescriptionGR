@@ -1,0 +1,80 @@
+<div class="row">
+  <div class="col-12">
+    <app-header></app-header>
+  </div>
+  <div class="col-10">
+    <br>
+    <br>
+    <h2 style="color: #107dd0;">
+      Επίσκεψη: {{visit.id}}
+      <ng-container *ngIf="!isFetching && visit.status != 'cancelled'">
+        <button (click)="openConfirmDeleteModal(visit.id)" class="btn btn-danger" style="float: right;
+            margin-right: 20px;">
+          Ακύρωση
+        </button>
+      </ng-container>
+      <ng-container *ngIf="!isFetching && visit.status != 'cancelled'">
+        <button (click)="editVisit(visit.id)" class="btn btn-info" style="float: right;
+            margin-right: 20px;">
+          Επεξεργασία
+        </button>
+      </ng-container>
+      <ng-container *ngIf="!isFetching && canBePrescribed">
+        <button (click)="createPrescriptionForVisit(visit.id)" class="btn btn-success" style="
+        float: right; margin-right: 20px;">
+          Δημιουργία Συνταγής<br>για αυτή την Επίσκεψη
+        </button>
+      </ng-container>
+    </h2>
+    <br>
+    <hr>
+    <div class="table" style="color: #107dd0;">
+      <ng-container *ngIf="!isFetching">
+        <ul style="font-size: 24px;">
+          <li>
+            <span style="color: red;">Λόγος Επίσκεψης: </span>
+            {{visit.reason}}
+          </li>
+          <li>
+            <div style="color: red;">Σχόλια Επίσκεψης:</div>
+            {{visit.comments}}
+          </li>
+          <li>
+            <span style="color: red;">Ημερομηνία Έναρξης Επίσκεψης: </span>
+            {{visit.startDate}}
+          </li>
+          <li>
+            <span style="color: red;">Κατάσταση Επίσκεψης: </span>
+            {{visit.status}}
+          </li>
+          <li>
+            <div style="color: red;">Πληροφορίες Ασθενή:</div>
+            <ng-container *ngIf="visit.patient.amka != null">
+              <div style="font-size: 18px;">
+                - <span style="color: red;">ΑΜΚΑ: </span> {{visit.patient.amka}} <br>
+                - <span style="color: red;">Όνομα: </span> {{visit.patient.firstName}} <br>
+                - <span style="color: red;">Επώνυμο: </span> {{visit.patient.lastName}} <br>
+                - <span style="color: red;">Ημερομηνία Γέννησης: </span> {{visit.patient.birthDate | date}} <br>
+                - <span style="color: red;">Πόλη: </span> {{visit.patient.city}}, {{visit.patient.county}} <br>
+                - <span style="color: red;">Διεύθυνση: </span> {{visit.patient.address}} <br>
+              </div>
+            </ng-container>
+          </li>
+          <li>
+            <div style="color: red;">Στοιχεία Μονάδας Συνταγογράφησης:</div>
+            <ng-container *ngIf="visit.unit.id != null">
+              <div style="font-size: 18px;">
+                - <span style="color: red;">ID: </span> {{visit.unit.id}} <br>
+                - <span style="color: red;">Όνομα: </span> {{visit.unit.healthCareUnit.unitType.name}} <br>
+                - <span style="color: red;">Περιγραφή: </span> {{visit.unit.healthCareUnit.description}} <br>
+              </div>
+            </ng-container>
+          </li>
+        </ul>
+      </ng-container>
+      <ng-container *ngIf="isFetching">
+        <app-spinner class="main-loader"></app-spinner>
+      </ng-container>
+    </div>
+  </div>
+</div>

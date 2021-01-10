@@ -1,0 +1,15 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-title">Ακύρωση Επίσκεψης</h4>
+</div>
+<div class="modal-body">
+  <p><strong>Είστε σίγουρος οτι θέλετε να ακυρώσετε αυτή την επίσκεψη;</strong></p>
+</div>
+<div class="modal-footer">
+  <button style="width: 4rem;" type="button" class="btn btn-outline-secondary"
+          (click)="modal.dismiss('cancel click')">
+    Όχι
+  </button>
+  <button style="width: 4rem;" type="button" class="btn btn-danger" (click)="modal.close('Ok click')">
+    Ναι
+  </button>
+</div>

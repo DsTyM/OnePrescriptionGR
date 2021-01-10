@@ -1,0 +1,77 @@
+<div class="row">
+  <div class="col-12">
+    <app-header></app-header>
+  </div>
+  <div class="col-12">
+    <div class="col-10">
+      <br>
+      <br>
+      <h3 style="color: #107dd0;">Δημιουργία Επίσκεψης</h3>
+      <hr>
+      <form #f="ngForm">
+        <div class="form-group">
+          <label for="visit-reason" style="color: #107dd0;">Λόγος Επίσκεψης: </label>
+          <input [(ngModel)]="visitData.reason" name="visit-reason" id="visit-reason" class="form-control" type="text"
+                 placeholder="Λόγος Επίσκεψης" required #r1="ngModel"/>
+          <div style="color: red; font-size: 13px;" *ngIf="!r1.valid && r1.touched">Παρακαλώ συμπληρώστε αυτό το
+            πεδίο!
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="visit-comments" style="color: #107dd0;">Σχόλια Επίσκεψης: </label>
+          <textarea [(ngModel)]="visitData.comments" name="visit-comments" id="visit-comments" class="form-control"
+                    type="text" rows="3" placeholder="Σχόλια Επίσκεψης"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="patient-amka" style="color: #107dd0;">ΑΜΚΑ Ασθενή: </label>
+          <input [(ngModel)]="visitData.patientAmka" name="patient-amka" id="patient-amka" class="form-control"
+                 type="text" placeholder="ΑΜΚΑ Ασθενή" (focusout)="getPatient(visitData.patientAmka)" required
+                 #r2="ngModel"/>
+          <div style="color: red; font-size: 13px;" *ngIf="!r2.valid && r2.touched">Παρακαλώ συμπληρώστε αυτό το
+            πεδίο!
+          </div>
+          <ng-container *ngIf="visit.patient.amka != null">
+            <div style="color: #107dd0;">
+              Στοιχεία Ασθενή:
+              <ul>
+                <li>{{visit.patient.firstName + ' ' + visit.patient.lastName}}</li>
+                <li>{{visit.patient.birthDate | date}}</li>
+                <li>{{visit.patient.address + ', ' + visit.patient.city + ', ' + visit.patient.county}}</li>
+                <li>{{visit.patient.telephone}}</li>
+              </ul>
+            </div>
+          </ng-container>
+        </div>
+
+        <label for="dropdownBasic1" style="color: #107dd0;">Επιλογή Μονάδας Συνταγογράφησης: </label>
+        <br>
+        <div ngbDropdown class="d-inline-block">
+          <button class="btn btn-outline-primary" id="dropdownBasic1" ngbDropdownToggle>
+            <ng-container *ngIf="visit.unit.id == null">
+              Επιλογή Μονάδας Συνταγογράφησης
+            </ng-container>
+            <ng-container *ngIf="visit.unit.id != null">
+              {{selectedDoctorUnitName}}
+            </ng-container>
+          </button>
+          <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+            <ng-container *ngFor="let unit of doctorUnits.item">
+              <button (click)="selectDoctorUnit(unit.id)" ngbDropdownItem class="btn btn-primary m-1">
+                {{unit.healthCareUnit.unitType.name + ' - ' + unit.healthCareUnit.description}}
+              </button>
+            </ng-container>
+          </div>
+        </div>
+        <br>
+        <br>
+        <br>
+        <button (click)="createVisit()" type="button" class="btn btn-primary"
+                [disabled]="!f.valid">
+          Δημιουργήστε την<br>Επίσκεψη
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

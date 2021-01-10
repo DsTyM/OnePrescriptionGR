@@ -1,0 +1,28 @@
+<div class="row">
+  <div class="col-12">
+    <app-header></app-header>
+  </div>
+  <ng-container *ngIf="!isFetching">
+    <div class="col-12">
+      <br>
+      <br>
+      <div style="color: #107dd0; font-size: 24px;">Στοιχεία Ιατρού:</div>
+      <ng-container *ngIf="doctor.amka != null">
+        <div style="font-size: 22px;">
+          - <span style="color: red;">ΑΜΚΑ: </span><span style="color: #107dd0;">{{doctor.amka}}</span><br>
+          - <span style="color: red;">Όνομα: </span><span style="color: #107dd0;">{{doctor.name.firstname}}</span><br>
+          - <span style="color: red;">Επώνυμο: </span><span style="color: #107dd0;">{{doctor.name.lastname}}</span><br>
+          - <span style="color: red;">Ημερομηνία Γέννησης: </span><span style="color: #107dd0;">
+          {{doctor.birthDate | date}}
+        </span><br>
+          - <span style="color: red;">Ειδικότητα: </span><span style="color: #107dd0;">
+          {{doctor.doctorSpecialty.name}}
+        </span><br>
+        </div>
+      </ng-container>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="isFetching">
+    <app-spinner class="main-loader"></app-spinner>
+  </ng-container>
+</div>
