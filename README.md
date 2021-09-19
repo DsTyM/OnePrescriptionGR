@@ -29,8 +29,10 @@ Then you should open this file: `src/environments/properties.ts`:
 apiKey: 'REPLACE_WITH_YOUR_KEY_HERE'
 ```
 
-and change `REPLACE_WITH_YOUR_KEY_HERE` with your API Key that [Idika](http://www.idika.gr/) has provided to you. If we
-don't have one, you should request one from Idika.
+and change `REPLACE_WITH_YOUR_KEY_HERE` with your API Key that [Idika](http://www.idika.gr/) has provided to you. To get
+an API key you have to contact IDIKA's E-Prescription team. You can find their Greek phone number in this
+site: [E-Prescription](https://www.e-prescription.gr). You should call them, explain to them why you need the API key
+(e.g. for Development / Research purposes) and they should provide you one.
 
 To start the application, you need to run:
 
